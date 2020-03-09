@@ -16,33 +16,34 @@
  */
 class Solution {
     public List<TreeNode> generateTrees(int n) {
-        if (n == 0) { return new ArrayList<>(); }
-        return generateTrees(1, n);
-    }
-    private List<TreeNode> generateTrees(int start, int end) {
-        List<TreeNode> res = new ArrayList<>();
-        if (start > end) { 
-            res.add(null);
-            return res; 
-        }
-        if (start == end) {
-            res.add(new TreeNode(start));
-            return res;
-        }
-        for (int i = start; i <= end; i++) {
-            // i as root
-            List<TreeNode> leftSubTree = generateTrees(start, i - 1);
-            List<TreeNode> rightSubTree = generateTrees(i + 1, end);
-            for (TreeNode left : leftSubTree) {
-                for (TreeNode right : rightSubTree) {
-                    TreeNode root = new TreeNode(i);
-                    root.left = left;
-                    root.right = right;
-                    res.add(root);
+        ArrayList<TreeNode>[] res = new ArrayList[n + 1];
+        res[0] = new ArrayList<>();
+        if (n == 0) { return res[n]; }
+        res[0].add(null);
+
+        for (int length = 1; length <= n; length++) {
+            res[length] = new ArrayList<>();
+            for (int root = 1; root <= length; root++) {
+                int left = root - 1;
+                int right = length - root;
+                for (TreeNode leftSubTree : res[left]) {
+                    for (TreeNode rightSubTree : res[right]) {
+                        TreeNode cloneRoot = new TreeNode(root);
+                        cloneRoot.left = leftSubTree;
+                        cloneRoot.right = clone(rightSubTree, root);
+                        res[length].add(cloneRoot);
+                    }
                 }
             }
         }
-        return res;
+        return res[n];
+    }
+    private TreeNode clone(TreeNode tree, int offset) {
+        if (tree == null) { return tree; }
+        TreeNode root = new TreeNode(tree.val + offset);
+        root.left = clone(tree.left, offset);
+        root.right = clone(tree.right, offset);
+        return root;
     }
 }
 // @lc code=end
