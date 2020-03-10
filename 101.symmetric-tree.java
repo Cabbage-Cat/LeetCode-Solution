@@ -1,7 +1,7 @@
 /*
- * @lc app=leetcode id=98 lang=java
+ * @lc app=leetcode id=101 lang=java
  *
- * [98] Validate Binary Search Tree
+ * [101] Symmetric Tree
  */
 
 // @lc code=start
@@ -15,19 +15,22 @@
  * }
  */
 class Solution {
-    public boolean isValidBST(TreeNode root) {
+    public boolean isSymmetric(TreeNode root) {
+        LinkedList<Integer> linkedList = new LinkedList<>();
         Stack<TreeNode> stack = new Stack<>();
-        TreeNode prev = null;
-        
         while (root != null || !stack.isEmpty()) {
             while (root != null) {
                 stack.push(root);
                 root = root.left;
             }
             root = stack.pop();
-            if (prev != null && root.val <= prev.val) { return false; }
-            prev = root;
+            linkedList.addLast(root.val);
             root = root.right;
+        }
+        while (linkedList.size() > 1) {
+            int first = linkedList.removeFirst();
+            int last = linkedList.removeLast();
+            if (first != last) { return false; }
         }
         return true;
     }
