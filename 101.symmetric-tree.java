@@ -16,21 +16,34 @@
  */
 class Solution {
     public boolean isSymmetric(TreeNode root) {
-        LinkedList<Integer> linkedList = new LinkedList<>();
-        Stack<TreeNode> stack = new Stack<>();
-        while (root != null || !stack.isEmpty()) {
-            while (root != null) {
-                stack.push(root);
-                root = root.left;
-            }
-            root = stack.pop();
-            linkedList.addLast(root.val);
-            root = root.right;
+        if (root == null) { return true; }
+        Queue<TreeNode> left = new ArrayDeque<>();
+        Queue<TreeNode> right = new ArrayDeque<>();
+        if (root.left == null && root.right == null) {}
+        else if (root.left == null || root.right == null) { return false; }
+        else {
+            left.offer(root.left);
+            right.offer(root.right);
         }
-        while (linkedList.size() > 1) {
-            int first = linkedList.removeFirst();
-            int last = linkedList.removeLast();
-            if (first != last) { return false; }
+        while (!left.isEmpty() && !right.isEmpty()) {
+            TreeNode currLeft = left.poll();
+            TreeNode currRight = right.poll();
+            // case 1
+            if (currLeft.val != currRight.val) { return false; }
+
+            // case 2
+            if (currLeft.right == null && currRight.left == null) {}
+            else if (currLeft.right != null && currRight.left != null) {
+                left.offer(currLeft.right);
+                right.offer(currRight.left);
+            } else { return false; }
+
+            // case 3
+            if (currLeft.left == null && currRight.right == null) {}
+            else if (currLeft.left != null && currRight.right != null) {
+                left.offer(currLeft.left);
+                right.offer(currRight.right);
+            } else { return false; }
         }
         return true;
     }
