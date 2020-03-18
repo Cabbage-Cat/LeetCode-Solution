@@ -7,19 +7,24 @@
 // @lc code=start
 class Solution {
     public int minimumTotal(List<List<Integer>> triangle) {
-        int[] dp = new int[triangle.size()];
-        for (int i = 0; i < triangle.size(); i++) {
-            for (int j = triangle.get(i).size() - 1; j > -1; j--) {
-                int base = triangle.get(i).get(j);
-                if (j > 0) {
-                    int bias = Math.min(dp[j], dp[j - 1]);
-                    dp[j] += bias;
+        for (int row = 0; row < triangle.size(); row++) {
+            for (int i = 0; i < triangle.get(row).size(); i++) {
+                if (row > 0) {
+                    int base = triangle.get(row).get(i);
+                    int tmp = Integer.MAX_VALUE;
+                    if (i > 0) { tmp = Math.min(tmp, triangle.get(row - 1).get(i - 1)); }
+                    if (i < row) { tmp = Math.min(tmp, triangle.get(row - 1).get(i)); }
+                    // if (i < row - 1) { tmp = Math.min(tmp, triangle.get(row - 1).get(i + 1)); }
+                    triangle.get(row).set(i, base + tmp);
                 }
-                dp[j] += base;
             }
         }
-        int res = dp[0];
-        for (int x : dp) { if (x < res) { res = x; } }
+
+        List<Integer> lst = triangle.get(triangle.size() - 1);
+        int res = Integer.MAX_VALUE;
+        for (int i = 0; i < lst.size(); i++) {
+            res = Math.min(lst.get(i), res);
+        }
         return res;
     }
 }
