@@ -6,51 +6,18 @@
 
 // @lc code=start
 class Solution {
-    int[] prices;
-    private class Pair implements Comparable<Pair> {
-        int beginIndex;
-        int endIndex;
-        public Pair(int x, int y) {
-            beginIndex = x;
-            endIndex = y;
-        }
-        @Override
-        public int compareTo(Pair other) {
-            int thisProfit = prices[endIndex] - prices[beginIndex];
-            int otherProfit = prices[other.endIndex] - prices[other.beginIndex];
-            return otherProfit - thisProfit;
-        }
-    }
     public int maxProfit(int[] prices) {
-        this.prices = prices;
-        PriorityQueue<Pair> pq = new PriorityQueue<>();
-        int slow = 0, fast = 1;
-        for (; fast < prices.length; fast++) {
-            if (prices[fast] > prices[fast - 1]) { continue; }
-            else {
-                int endIndex = fast - 1;
-                if (slow != endIndex) {
-                    Pair p = new Pair(slow, endIndex);
-                    pq.offer(p);
-                }
-                slow = fast;
+        if (prices == null || prices.length == 0) { return 0; }
+        int[][] dp = new int[prices.length][3];
+        int res = 0;
+        for (int k = 1; k < 3; k++) {
+            for (int i = 1; i < prices.length; i++) {
+                dp[i][k] = Math.max(dp[i][k], dp[i - 1][k]);
+                for (int x = 0; x < i; x++) { dp[i][k] = Math.max(prices[i] + dp[x][k - 1] - prices[x], dp[i][k]); }
             }
         }
-        if (fast - 1 != slow && prices[fast - 1] - prices[slow] > 0) {
-            pq.offer(new Pair(slow, fast - 1));
-        }
-        int profit = 0;
-        if (pq.size() == 0) { }
-        else if (pq.size() == 1) {
-            Pair p = pq.poll();
-            profit += prices[p.endIndex] - prices[p.beginIndex];
-        } else {
-            Pair p = pq.poll();
-            Pair q = pq.poll();
-            profit += prices[p.endIndex] - prices[p.beginIndex];
-            profit += prices[q.endIndex] - prices[q.beginIndex];
-        }
-        return profit;
+        res = dp[prices.length - 1][2];
+        return res;
     }
 }
 // @lc code=end
