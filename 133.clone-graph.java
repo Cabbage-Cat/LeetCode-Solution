@@ -29,7 +29,26 @@ class Node {
 */
 class Solution {
     public Node cloneGraph(Node node) {
-        
+        if (node == null) { return null; }
+        Map<Integer, Node> nodeMap = new HashMap<>();
+        Queue<Node> nodeQueue = new ArrayDeque<>();
+        nodeQueue.offer(node);
+        while (!nodeQueue.isEmpty()) {
+            Node curr = nodeQueue.poll();
+            if (!nodeMap.containsKey(curr.val)) { nodeMap.put(curr.val, new Node(curr.val)); }
+            Node currCpy = nodeMap.get(curr.val);
+
+            if (currCpy.neighbors == null) { currCpy.neighbors = new ArrayList<>(); }
+            for (Node currAdj : curr.neighbors) {
+                if (!nodeMap.containsKey(currAdj.val)) { 
+                    nodeMap.put(currAdj.val, new Node(currAdj.val));
+                    nodeQueue.offer(currAdj);
+                }
+                Node currAdjCpy = nodeMap.get(currAdj.val);
+                currCpy.neighbors.add(currAdjCpy);
+            }
+        }
+        return nodeMap.get(node.val);
     }
 }
 // @lc code=end
