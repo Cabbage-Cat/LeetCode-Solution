@@ -6,23 +6,18 @@
 
 // @lc code=start
 class Solution {
-    private List<String> wordDict;
     public boolean wordBreak(String s, List<String> wordDict) {
-        this.wordDict = wordDict;
-        return helper(s);
-    }
-    private boolean helper(String s) {
         if (s == null || s.equals("")) { return true; }
-        boolean match = false;
-        for (String prefix : wordDict) {
-            boolean firstMatch = false;
-            if (s.startsWith(prefix)) {
-                firstMatch = true;
-                firstMatch = firstMatch && helper(s.substring(prefix.length()));
+        HashSet<String> dict = new HashSet<>(wordDict);
+        boolean[] dp = new boolean[s.length() + 1];
+        dp[0] = true;
+        for (int i = 1; i <= s.length(); i++) {
+            for (int j = 0; j < i; j++) {
+                if (dp[j] && dict.contains(s.substring(j , i))) { dp[i] = true; }
+                if (dp[i]) { break; }
             }
-            match = match || firstMatch;
         }
-        return match;
+        return dp[s.length()];
     }
 }
 // @lc code=end
